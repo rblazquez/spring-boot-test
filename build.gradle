@@ -1,0 +1,49 @@
+import com.wiredforcode.gradle.spawn.KillProcessTask
+import com.wiredforcode.gradle.spawn.SpawnProcessTask
+
+buildscript {
+    repositories {
+        jcenter()
+        maven { url "http://repo.spring.io/libs-release" }
+        maven { url 'http://dl.bintray.com/vermeulen-mp/gradle-plugins' }
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:1.2.2.RELEASE"
+        classpath 'com.wiredforcode:gradle-spawn-plugin:0.6.0'
+    }
+}
+
+apply plugin: 'spring-boot'
+apply plugin: 'groovy'
+apply plugin: 'eclipse'
+apply plugin: 'com.wiredforcode.spawn'
+apply plugin: 'war'
+
+war {
+	baseName = 'springBoot'
+	version =  '0.0.1'
+}
+
+repositories {
+    jcenter()
+    maven { url 'http://repo.spring.io/release' }
+}
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+dependencies {
+    compile "org.codehaus.groovy:groovy:2.2.2"
+    compile "org.springframework.boot:spring-boot-starter-web:1.2.2.RELEASE"
+    compile "org.springframework.boot:spring-boot-starter-actuator:1.2.2.RELEASE"
+}
+
+
+task startServer(type: SpawnProcessTask, dependsOn: 'assemble') {
+    command "java -jar ${projectDir}/build/libs/springBoot.jar"
+    ready 'Started Application'
+}
+
+task stopServer(type: KillProcessTask)
+
+
